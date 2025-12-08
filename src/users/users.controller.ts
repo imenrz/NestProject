@@ -4,15 +4,39 @@ import {
   Delete, 
   Get, 
   Headers, 
+  Injectable, 
   Param, 
   Post, 
   Put, 
   Query 
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-
+import { UserService } from './users.service';
+import { ObjectId } from 'typeorm';
+import { User } from './users.entity';
+@Injectable()
 @Controller('users')
 export class UsersController {
+
+  constructor( private readonly USERService:UserService){}
+
+ @Post('/add')
+ create(@Body()data){
+  return this.USERService.create(data.email,data.password);
+ }
+
+
+@Get("/all")
+  findall(){
+    return this.USERService.findALL()
+  }
+
+
+@Get('/:id')
+async findOne(@Param('id') id: ObjectId):Promise<User> {
+  return await this.USERService.findOneById(id); 
+}
+
   users = [
     { id: 1, username: 'Mohamed', email: 'mohamed@esprit.tn', status: 'active' },
     { id: 2, username: 'Sarra', email: 'sarra@esprit.tn', status: 'inactive' },
@@ -66,7 +90,26 @@ export class UsersController {
     };
   }
 
+  @Get('/active')
+findByActive() {
+ return this.USERService.findActive();
+ }
+
   
+
+@Delete('/delete/:id')
+  remove(@Param('id') id: ObjectId) {
+   
+    this.USERService.remove(id);
+    return { message: 'Utilisateur supprimé avec succès' };
+  }
+@Post('/activate')
+  activateAccount(@Body() data){
+      return this.USERService.activateAccount(data.email, data.password);
+
+  }
+
+  /*
   @Put(':id')
   updateUser(
     @Param('id') id: string,
@@ -104,5 +147,5 @@ export class UsersController {
       message: 'Utilisateur supprimé avec succès',
       user: deletedUser[0]
     };
-  }
+  }*/
 }

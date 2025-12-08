@@ -14,6 +14,7 @@ const content= await readFile("messages.json", "utf-8")
 const messages= JSON.parse(content)
 return messages
 }
+
 async create(content: string) {
 const contents= await readFile("messages.json", "utf-8")
 const messages= JSON.parse(contents)

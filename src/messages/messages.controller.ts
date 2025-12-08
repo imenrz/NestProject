@@ -1,19 +1,19 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Injectable, Param, Post } from '@nestjs/common';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { MessagesService } from './messages.service';
  
+@Injectable()
  
 @Controller('messages')
  
 export class MessagesController {
+  constructor(private readonly MessagesService:MessagesService){}
  
-  Messagesservice:MessagesService 
-  constructor(){
-    this.Messagesservice=new MessagesService
-  }
-    @Get()
+  
+ 
+   @Get()
     listMessages(){
-      return this.Messagesservice.findAll() 
+      return this.MessagesService.findAll() 
     }
  
     @Get("/:id")
@@ -32,8 +32,8 @@ createMessage(@Body() body: CreateMessageDto) {
 
  @Post()
 createMessage(@Body() body) {
-//console.log(body["content"]);
-return this.Messagesservice.create(body.content)
+
+return this.MessagesService.create(body.content,body.status)
 }
 
 }
