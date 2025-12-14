@@ -12,6 +12,9 @@ import { VehiculeModule } from './vehicule/vehicule.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './messages/messages.entity';
 import { User } from './users/users.entity';
+import { AdminUserController } from './users/admin-user-controller'; 
+import { ClientUserController } from './users/client_user-controller'; 
+
 
 @Global()
 @Module({
@@ -32,7 +35,7 @@ import { User } from './users/users.entity';
     AudioModule,
     VehiculeModule
   ],
-  controllers: [AppController], // Remove MessagesController from here
+  controllers: [AppController], 
   providers: [AppService],
 })
 export class AppModule {}

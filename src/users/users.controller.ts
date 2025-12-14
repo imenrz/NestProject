@@ -1,4 +1,5 @@
 import { 
+  BadRequestException,
   Body, 
   Controller, 
   Delete, 
@@ -6,29 +7,32 @@ import {
   Headers, 
   Injectable, 
   Param, 
+  ParseIntPipe, 
+  Patch, 
   Post, 
   Put, 
   Query 
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserService } from './users.service';
+import { UsersService } from './users.service';
 import { ObjectId } from 'typeorm';
 import { User } from './users.entity';
+import { updateUserDto } from './dtos/update_user.dto';
 @Injectable()
 @Controller('users')
 export class UsersController {
 
-  constructor( private readonly USERService:UserService){}
+  constructor( private readonly USERService:UsersService){}
 
  @Post('/add')
  create(@Body()data){
-  return this.USERService.create(data.email,data.password);
+  return this.USERService.createUser(data.email,data.password,data.role);
  }
 
 
 @Get("/all")
   findall(){
-    return this.USERService.findALL()
+    return this.USERService.findAll()
   }
 
 
@@ -107,6 +111,87 @@ findByActive() {
   activateAccount(@Body() data){
       return this.USERService.activateAccount(data.email, data.password);
 
+  }
+
+  @Get('role/:role')
+  async getUsersByRole(@Param('role') role: string) {
+    return this.USERService.findUsersByRole(role);
+  }
+  @Get('/inactive')
+  async getInactiveUsers() {
+    return this.USERService.findInactiveUsers();
+  }
+  @Get('domain/:domain')//tester avec http://localhost:3000/users/domain/gmail.com
+  async getUsersByDomain(@Param('domain') domain: string) {
+    return this.USERService.findUsersByDomain(domain);
+  }
+
+ @Get('/recent')
+  async getRecentUsers() {
+    return this.USERService.findRecentUsers();
+  }
+ @Get('/count-by-role')
+  async getCountByRole() {
+    return this.USERService.countUsersByRole();
+  }
+
+ @Get('/date-range')//tester avec localhost:3000/users/date-range?start=2025-12-07&end=2025-12-10
+  async getUsersByDateRange(
+    @Query('start') start: string,
+    @Query('end') end: string,
+  ) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return this.USERService.findUsersByDateRange(startDate, endDate);
+  }
+  @Get('/recent-limit')//localhost:3000/users/recent-limit?limit=2
+  async getRecentUsersLimit(@Query('limit', ParseIntPipe) limit: number){
+    return this.USERService.findRecentUsersLimit(limit);
+  }
+
+ @Get('/average-time')
+  async getAverageTimeBetweenCreateAndUpdate() {
+    return this.USERService.calculateAverageTimeBetweenCreateAndUpdate();
+  }
+@Get('/paginated')//localhost:3000/users/paginated?page=2&limit=3
+async getPaginatedUsers(
+  @Query('page', ParseIntPipe) page: number,
+  @Query('limit', ParseIntPipe) limit: number,
+) {
+  return this.USERService.findPaginatedUsers(page, limit);
+}
+@Get('/sorted')
+  async getSortedUsers() {
+    return this.USERService.findSortedUsers();
+  }
+@Get('/multi-sorted')
+  async getUsersWithMultipleSorting() {
+    return this.USERService.findUsersWithMultipleSorting();
+  }
+  //Partie 4 
+ @Post('/doublon')
+  async createDoublon(@Body() data: CreateUserDto) {
+    try {
+      return await this.USERService.createUserDoublon(data);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+@Patch('/updateUserNonTrouve/:id')
+   updateUserNonTrouve(
+    @Param('id') id: ObjectId,
+    @Body() attrs: updateUserDto,
+  ) {
+   
+    return this.USERService.updateUser(id, attrs);
+  }
+@Patch('/deactivate-old-accounts')
+   deactivateOldAccounts() {
+    this.USERService.deactivateOldAccounts();
+  }
+ @Patch('/update-role-by-domain')
+  updateUsersRoleByDomain(@Body() data ) {
+    this.USERService.updateUsersRoleByDomain(data.domain, data.newRole);
   }
 
   /*

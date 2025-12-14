@@ -1,17 +1,20 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Message } from "./messages.entity";
-import { Repository } from "typeorm";
+import { MongoRepository } from "typeorm";
+import { ObjectId } from "mongodb";
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message) 
-    private messageRepository: Repository<Message>
+    private messageRepository: MongoRepository<Message>  // Changed to MongoRepository
   ) {}
 
   async findOne(id: string): Promise<Message> {
-    const message = await this.messageRepository.findOne({ where: { id } });
+    // Convert string to ObjectId
+    const objectId = new ObjectId(id);
+    const message = await this.messageRepository.findOne({ where: { id: objectId } });
     
     if (!message) {
       throw new NotFoundException(`Message with ID ${id} not found`);

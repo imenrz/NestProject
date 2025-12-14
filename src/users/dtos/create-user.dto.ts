@@ -9,4 +9,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'L\'email est obligatoire' })
   @IsEmail({}, { message: 'L\'email doit être une adresse valide' })
   email: string;
+  
+ role:string; 
+
+
 }
