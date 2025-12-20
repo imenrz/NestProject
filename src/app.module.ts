@@ -12,8 +12,9 @@ import { VehiculeModule } from './vehicule/vehicule.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './messages/messages.entity';
 import { User } from './users/users.entity';
-import { AdminUserController } from './users/admin-user-controller'; 
-import { ClientUserController } from './users/client_user-controller'; 
+
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 
 @Global()
@@ -27,14 +28,11 @@ import { ClientUserController } from './users/client_user-controller';
       entities: [Message,User],
       synchronize: true,
     }),
-    MessagesModule, // Add this line
-    UsersModule,
-    MoteurModule,
-    GenerateurModule,
-    PhareModule,
-    AudioModule,
-    VehiculeModule
-  ],
+   MessagesModule, UsersModule, MoteurModule, GenerateurModule, PhareModule, AudioModule, VehiculeModule,
+  ServeStaticModule.forRoot({
+rootPath: join(__dirname, '..', 'public'),
+}),],
+
   controllers: [AppController], 
   providers: [AppService],
 })

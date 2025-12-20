@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ObjectId } from 'mongodb';
+import { ObjectId } from 'typeorm';
 
 import { User } from './users.entity';
 import { MongoRepository } from 'typeorm';

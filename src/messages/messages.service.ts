@@ -29,7 +29,7 @@ export class MessagesService {
 
   async create(content: string, status: string): Promise<Message> {
     try {
-      const message = this.messageRepository.create({ content, status });
+      const message=this.messageRepository.create({content,status,date:new Date()});
       await this.messageRepository.save(message);
       return message;
     } catch (error) {
